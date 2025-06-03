@@ -35,7 +35,9 @@ const ActivityLogList: React.FC<ActivityLogListProps> = ({ activityLogs, users }
                     <span className="ml-2 text-blue-600">{getUserName(log.userId)}</span>
                   )}
                 </div>
-                <div className="text-xs text-gray-400 whitespace-nowrap">{log.timestamp}</div>
+                <div className="text-xs text-gray-400 whitespace-nowrap">
+                  {new Date(log.timestamp).toLocaleString('vi-VN')}
+                </div>
               </div>
               <div className="text-sm text-gray-600 mt-1">{log.details}</div>
               {log.changes && log.changes.length > 0 && (

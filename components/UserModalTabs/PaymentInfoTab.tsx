@@ -6,11 +6,9 @@ import { Textarea } from '../ui/textarea';
 interface PaymentInfoTabProps {
   formData: any;
   setFormData: React.Dispatch<React.SetStateAction<any>>;
-  notes: string;
-  setNotes: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const PaymentInfoTab: React.FC<PaymentInfoTabProps> = ({ formData, setFormData, notes, setNotes }) => {
+const PaymentInfoTab: React.FC<PaymentInfoTabProps> = ({ formData, setFormData }) => {
   return (
     <div className='space-y-4'>
       <div>
@@ -47,8 +45,8 @@ const PaymentInfoTab: React.FC<PaymentInfoTabProps> = ({ formData, setFormData, 
         <Label htmlFor='notes'>Payment Notes</Label>
         <Textarea
           id='notes'
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          value={formData.paymentNotes || ''}
+          onChange={(e) => setFormData((prev: any) => ({ ...prev, paymentNotes: e.target.value }))}
           placeholder='Add payment notes or comments...'
           rows={4}
         />

@@ -11,14 +11,14 @@ const Header: React.FC<HeaderProps> = ({ onAddUser }) => (
   <div className='mb-6'>
     <div className='flex items-center justify-between'>
       <div>
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-4'>
           <Image
             src='/youtube_premium.png'
             alt='YouTube Premium Logo'
             width={150}
             height={31}
           />
-          <h1 className='text-3xl font-bold text-gray-900 flex items-center gap-2'>
+          <h1 className='text-3xl font-bold text-gray-900 flex items-center'>
             Tracking Dashboard
           </h1>
         </div>

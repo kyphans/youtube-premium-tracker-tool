@@ -31,14 +31,15 @@ export async function POST(req: NextRequest) {
       endDate,
       status,
       userEmail,
-      ownerFamilyEmail
+      ownerFamilyEmail,
+      paymentNotes
     } = await req.json();
     if (!description || duration === undefined || available === undefined || feeConstant === undefined || !startDate || !endDate || !status) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     const result = await sql`
-      INSERT INTO users (description, duration, available, fee_constant, start_date, end_date, status, user_email, owner_family_email)
-      VALUES (${description}, ${duration}, ${available}, ${feeConstant}, ${startDate}, ${endDate}, ${status}, ${userEmail}, ${ownerFamilyEmail})
+      INSERT INTO users (description, duration, available, fee_constant, start_date, end_date, status, user_email, owner_family_email, payment_notes)
+      VALUES (${description}, ${duration}, ${available}, ${feeConstant}, ${startDate}, ${endDate}, ${status}, ${userEmail}, ${ownerFamilyEmail}, ${paymentNotes})
       RETURNING *
     `;
     const camelCaseUser = camelcaseKeys(result[0], { deep: true });

@@ -33,7 +33,8 @@ const UserModal: React.FC<UserModalProps> = ({
     status: 'NONE',
     feeConstant: 40,
     userEmail: '',
-    ownerFamilyEmail: ''
+    ownerFamilyEmail: '',
+    paymentNotes: ''
   });
   const [notes, setNotes] = useState('');
   const [originalData, setOriginalData] = useState<Partial<User>>({});
@@ -72,7 +73,8 @@ const UserModal: React.FC<UserModalProps> = ({
         status: 'NONE' as const,
         feeConstant: 40,
         userEmail: '',
-        ownerFamilyEmail: ''
+        ownerFamilyEmail: '',
+        paymentNotes: ''
       };
       setFormData(defaultData);
       setOriginalData({});
@@ -93,7 +95,6 @@ const UserModal: React.FC<UserModalProps> = ({
 
   const getChanges = () => {
     if (!user) return [];
-    // Chỉ kiểm tra các trường nhập liệu, không kiểm tra các trường tính toán tự động
     const fieldsToCheck = [
       'description',
       'duration',
@@ -101,8 +102,8 @@ const UserModal: React.FC<UserModalProps> = ({
       'status',
       'feeConstant',
       'userEmail',
-      'ownerFamilyEmail'
-      // KHÔNG so sánh: available, fees, endDate
+      'ownerFamilyEmail',
+      'paymentNotes'
     ];
     const changes: { field: string; oldValue: any; newValue: any; }[] = [];
     fieldsToCheck.forEach(key => {
@@ -129,7 +130,6 @@ const UserModal: React.FC<UserModalProps> = ({
       });
       return;
     }
-
     const userData: User = {
       id: user?.id || '',
       description: formData.description!,
@@ -140,12 +140,11 @@ const UserModal: React.FC<UserModalProps> = ({
       status: formData.status as 'DONE' | 'NONE' | 'PENDING',
       feeConstant: formData.feeConstant || 40,
       userEmail: formData.userEmail || '',
-      ownerFamilyEmail: formData.ownerFamilyEmail || ''
+      ownerFamilyEmail: formData.ownerFamilyEmail || '',
+      paymentNotes: formData.paymentNotes || ''
     };
-
     const changes = getChanges();
     onSave(userData, changes);
-    
     toast({
       title: user ? 'User Updated' : 'User Created',
       description: user
@@ -190,7 +189,7 @@ const UserModal: React.FC<UserModalProps> = ({
           </TabsContent>
 
           <TabsContent value="payment" className="space-y-4">
-            <PaymentInfoTab formData={formData} setFormData={setFormData} notes={notes} setNotes={setNotes} />
+            <PaymentInfoTab formData={formData} setFormData={setFormData} />
           </TabsContent>
 
           <TabsContent value="service" className="space-y-4">

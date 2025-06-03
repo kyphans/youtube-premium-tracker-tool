@@ -36,7 +36,8 @@ export async function PUT(
       endDate,
       status,
       userEmail,
-      ownerFamilyEmail
+      ownerFamilyEmail,
+      paymentNotes
     } = await req.json();
     const result = await sql`
       UPDATE users SET
@@ -48,7 +49,8 @@ export async function PUT(
         end_date = ${endDate},
         status = ${status},
         user_email = ${userEmail},
-        owner_family_email = ${ownerFamilyEmail}
+        owner_family_email = ${ownerFamilyEmail},
+        payment_notes = ${paymentNotes}
       WHERE id = ${id}
       RETURNING *
     `;

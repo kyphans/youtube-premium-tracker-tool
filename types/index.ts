@@ -9,6 +9,7 @@ export interface User {
   feeConstant: number;
   userEmail?: string;
   ownerFamilyEmail?: string;
+  paymentNotes?: string;
 }
 
 export interface ActivityLog {

@@ -8,11 +8,12 @@ export async function GET(req: NextRequest) {
     const userId = searchParams.get('userId');
     let logs;
     if (userId) {
-      logs = await sql`SELECT * FROM activity_logs WHERE user_id = ${Number(userId)} ORDER BY timestamp DESC LIMIT 20`;
+      logs = await sql`SELECT *, timestamp AT TIME ZONE 'Asia/Ho_Chi_Minh' AS timestamp_vn FROM activity_logs WHERE user_id = ${Number(userId)} ORDER BY timestamp DESC LIMIT 20`;
     } else {
-      logs = await sql`SELECT * FROM activity_logs ORDER BY timestamp DESC LIMIT 20`;
+      logs = await sql`SELECT *, timestamp AT TIME ZONE 'Asia/Ho_Chi_Minh' AS timestamp_vn FROM activity_logs ORDER BY timestamp DESC LIMIT 20`;
     }
-    const camelCaseLogs = camelcaseKeys(logs, { deep: true });
+    const logsWithVNTime = logs.map((log: any) => ({ ...log, timestamp: log.timestamp_vn, timestamp_vn: undefined }));
+    const camelCaseLogs = camelcaseKeys(logsWithVNTime, { deep: true });
     return NextResponse.json(camelCaseLogs);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch logs', detail: String(error) }, { status: 500 });

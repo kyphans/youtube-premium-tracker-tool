@@ -76,7 +76,11 @@ const UserTable: React.FC<UserTableProps> = ({
       });
     }
 
-    const message = `Ngày hết hạn gói Youtube là ${user.endDate}, đã trễ ${Math.abs(user.available)} ngày, số tiền cần thanh toán ít nhất là ${Math.abs((user.feeConstant || 40) / 30 * user.available)}K`;
+    const message = 
+    `Ngày hết hạn gói Youtube là ${user.endDate},
+    đã trễ ${Math.abs(user.available)} ngày,
+    với giá 1 tháng là ${user.feeConstant}K,
+    vậy số tiền cần thanh toán ít nhất là ${Math.abs((user.feeConstant || 40) / 30 * user.available)}K`;
     navigator.clipboard.writeText(message);
     toast({
       title: 'Đã copy tin nhắn nhắc nhở',
@@ -161,7 +165,14 @@ const UserTable: React.FC<UserTableProps> = ({
                   {user.id}
                 </td>
                 <td className='px-4 py-4 whitespace-nowrap'>
-                  <div className='text-sm font-medium text-gray-900 hover:text-blue-600 cursor-pointer'>
+                  <div
+                    className='text-sm font-medium text-gray-900 hover:text-blue-600 cursor-pointer'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEditUser(user);
+                    }}
+                    title='Edit user'
+                  >
                     {user.description}
                   </div>
                 </td>
