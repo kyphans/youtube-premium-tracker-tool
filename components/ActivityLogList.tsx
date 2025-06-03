@@ -13,6 +13,7 @@ const formatLogValue = (value: any) => {
 };
 
 const ActivityLogList: React.FC<ActivityLogListProps> = ({ activityLogs, users }) => {
+  const logs = Array.isArray(activityLogs) ? activityLogs : [];
   const getUserName = (userId: string) => {
     const user = users.find(u => u.id === userId);
     return user ? user.description : 'Unknown User';
@@ -21,11 +22,11 @@ const ActivityLogList: React.FC<ActivityLogListProps> = ({ activityLogs, users }
   return (
     <div className="bg-white rounded-lg shadow p-6 mt-4 min-h-[700px] overflow-y-auto">
       <h2 className="text-xl font-bold mb-4 text-gray-800">System Activity Logs</h2>
-      {activityLogs.length === 0 ? (
+      {logs.length === 0 ? (
         <p className="text-gray-500">No activity logs yet.</p>
       ) : (
         <ul className="divide-y divide-gray-200">
-          {activityLogs.map(log => (
+          {logs.map(log => (
             <li key={log.id} className="py-5">
               <div className="flex justify-between items-start">
                 <div className="font-medium text-sm">

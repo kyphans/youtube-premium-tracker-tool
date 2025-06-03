@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -9,38 +9,51 @@ interface UserDetailsTabProps {
 }
 
 const UserDetailsTab: React.FC<UserDetailsTabProps> = ({ formData, setFormData }) => {
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({});
+  const isEmpty = (field: string) => {
+    if (field === 'duration') {
+      return formData.duration === '' || formData.duration === undefined || formData.duration === null;
+    }
+    return !formData[field] || formData[field] === '';
+  };
   return (
     <div className="grid grid-cols-2 gap-4">
       <div>
-        <Label htmlFor="description">Description *</Label>
+        <Label htmlFor="description">
+          Description <span className="text-red-500">*</span>
+        </Label>
         <Input
           id="description"
           value={formData.description || ''}
+          required
+          onBlur={() => setTouched(prev => ({ ...prev, description: true }))}
           onChange={(e) => setFormData((prev: any) => ({ ...prev, description: e.target.value }))}
           placeholder="Enter user description"
         />
+        {touched.description && isEmpty('description') && (
+          <div className="text-xs text-red-500 mt-1">Description is required</div>
+        )}
       </div>
       <div>
-        <Label htmlFor="duration">Duration (days) *</Label>
+        <Label htmlFor="duration">
+          Duration (days) <span className="text-red-500">*</span>
+        </Label>
         <div className="flex space-x-2">
           <Input
             id="duration"
             type="text"
+            required
+            onBlur={() => setTouched(prev => ({ ...prev, duration: true }))}
             value={formData.durationExpression || String(formData.duration) || ''}
             onChange={(e) => {
               const expression = e.target.value;
               setFormData((prev: any) => ({
                 ...prev,
                 durationExpression: expression,
-                // Also clear duration if expression is empty
-                duration: expression === '' ? '' : prev.duration, // Keep previous duration or set to '' if cleared
+                duration: expression === '' ? '' : prev.duration,
               }));
-
-              // Only attempt to evaluate if the expression is not empty
               if (expression !== '') {
                 try {
-                  // Use Function constructor for safer evaluation than eval()
-                  // Evaluate the expression to get the numeric value
                   const calculatedDuration = Function('"use strict"; return (' + expression + ')')();
                   if (!isNaN(calculatedDuration)) {
                     setFormData((prev: any) => ({
@@ -48,14 +61,10 @@ const UserDetailsTab: React.FC<UserDetailsTabProps> = ({ formData, setFormData }
                       duration: parseInt(calculatedDuration) || 0,
                     }));
                   } else {
-                     // If calculation results in NaN (e.g., invalid expression after typing), clear duration
-                     setFormData((prev: any) => ({ ...prev, duration: '' }));
+                    setFormData((prev: any) => ({ ...prev, duration: '' }));
                   }
                 } catch (error) {
-                  // Handle potential errors during calculation (e.g., invalid expression)
-                  console.error("Error evaluating duration expression:", error);
-                   // If there's an error, clear the numeric duration but keep the expression
-                   setFormData((prev: any) => ({ ...prev, duration: '' }));
+                  setFormData((prev: any) => ({ ...prev, duration: '' }));
                 }
               }
             }}
@@ -106,6 +115,9 @@ const UserDetailsTab: React.FC<UserDetailsTabProps> = ({ formData, setFormData }
             +90
           </button>
         </div>
+        {touched.duration && isEmpty('duration') && (
+          <div className="text-xs text-red-500 mt-1">Duration is required</div>
+        )}
       </div>
       <div>
         <Label htmlFor="available">Available (auto-calculated)</Label>
@@ -144,10 +156,14 @@ const UserDetailsTab: React.FC<UserDetailsTabProps> = ({ formData, setFormData }
         </div>
       </div>
       <div>
-        <Label htmlFor="startDate">Start Date *</Label>
+        <Label htmlFor="startDate">
+          Start Date <span className="text-red-500">*</span>
+        </Label>
         <Input
           id="startDate"
           type="date"
+          required
+          onBlur={() => setTouched(prev => ({ ...prev, startDate: true }))}
           value={formData.startDate ? formData.startDate.split('/').reverse().join('-') : ''}
           onChange={(e) => {
             const date = e.target.value;
@@ -155,6 +171,9 @@ const UserDetailsTab: React.FC<UserDetailsTabProps> = ({ formData, setFormData }
             setFormData((prev: any) => ({ ...prev, startDate: formattedDate }));
           }}
         />
+        {touched.startDate && isEmpty('startDate') && (
+          <div className="text-xs text-red-500 mt-1">Start Date is required</div>
+        )}
       </div>
       <div>
         <Label htmlFor="endDate">End Date (auto-calculated)</Label>

@@ -12,35 +12,44 @@ interface PaymentInfoTabProps {
 
 const PaymentInfoTab: React.FC<PaymentInfoTabProps> = ({ formData, setFormData, notes, setNotes }) => {
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       <div>
-        <Label htmlFor="feeConstant">Fee Constant</Label>
+        <Label htmlFor='feeConstant'>Fee Constant</Label>
         <Input
-          id="feeConstant"
-          type="number"
+          id='feeConstant'
+          type='number'
           value={formData.feeConstant || 40}
-          onChange={(e) => setFormData((prev: any) => ({ ...prev, feeConstant: parseInt(e.target.value) || 40 }))}
-          placeholder="Default: 40"
+          onChange={(e) =>
+            setFormData((prev: any) => ({
+              ...prev,
+              feeConstant: parseInt(e.target.value) || 40
+            }))
+          }
+          placeholder='Default: 40'
         />
       </div>
       <div>
-        <Label htmlFor="fees">Fees (auto-calculated)</Label>
+        <Label htmlFor='fees'>Fees (auto-calculated)</Label>
         <Input
-          id="fees"
-          type="number"
-          value={formData.available >= 0 ? 0 : formData.fees || 0}
+          id='fees'
+          type='number'
+          value={
+            formData.available >= 0
+              ? 0
+              : Math.round((formData.available / 30) * formData.feeConstant)
+          }
           readOnly
-          className="bg-gray-100"
-          placeholder="Calculated automatically"
+          className='bg-gray-100'
+          placeholder='Calculated automatically'
         />
       </div>
       <div>
-        <Label htmlFor="notes">Payment Notes</Label>
+        <Label htmlFor='notes'>Payment Notes</Label>
         <Textarea
-          id="notes"
+          id='notes'
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Add payment notes or comments..."
+          placeholder='Add payment notes or comments...'
           rows={4}
         />
       </div>

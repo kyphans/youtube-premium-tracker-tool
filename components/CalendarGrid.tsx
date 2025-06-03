@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { User } from '../types';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from './ui/button';
+import { useIsClient } from 'usehooks-ts';
 
 interface CalendarGridProps {
   currentMonth: Date;
@@ -10,6 +11,7 @@ interface CalendarGridProps {
   users: User[];
   selectedUserIds: string[];
   onEditUser: (user: User) => void;
+  statusFilter: 'DONE' | 'NONE' | 'PENDING' | null;
 }
 
 const CalendarGrid: React.FC<CalendarGridProps> = ({
@@ -17,13 +19,19 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
   onMonthChange,
   users,
   selectedUserIds,
-  onEditUser
+  onEditUser,
+  statusFilter
 }) => {
+  const isClient = useIsClient();
   const [today, setToday] = useState<Date | null>(null);
 
   useEffect(() => {
-    setToday(new Date());
-  }, []);
+    if (isClient) {
+      setToday(new Date());
+    }
+  }, [isClient]);
+
+  if (!isClient) return null;
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -100,9 +108,10 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
     onMonthChange(newDate);
   };
 
-  const filteredUsers = selectedUserIds.length > 0 
-    ? users.filter(user => selectedUserIds.includes(user.id))
-    : users;
+  const safeUsers = Array.isArray(users) ? users : [];
+  const filteredUsers = statusFilter !== null
+    ? safeUsers.filter(user => selectedUserIds.includes(user.id))
+    : safeUsers;
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">

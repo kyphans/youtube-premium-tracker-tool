@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { User, ActivityLog } from '../types';
-import { sampleUsers, sampleActivityLogs } from '../data/sampleData';
 import UserTable from '../components/UserTable';
 import CalendarGrid from '../components/CalendarGrid';
 import UserModal from '../components/UserModal';
@@ -10,19 +9,21 @@ import ActivityLogList from '../components/ActivityLogList';
 import Header from '../components/Header';
 import StatsCards from '../components/StatsCards';
 import { getUsers, createUser, updateUser, deleteUser } from '../lib/api/user';
+import { useIsClient } from 'usehooks-ts';
+import { getLogs, createLog } from '../lib/api/log';
 
 export default function Home() {
+  const isClient = useIsClient();
   const [users, setUsers] = useState<User[]>([]);
-  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(sampleActivityLogs);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | undefined>();
   const [statusFilter, setStatusFilter] = useState<'DONE' | 'NONE' | 'PENDING' | null>(null);
-  const [today, setToday] = useState<Date | null>(null);
 
   useEffect(() => {
-    setToday(new Date());
+    setCurrentMonth(new Date());
     async function fetchUsers() {
       try {
         const data = await getUsers();
@@ -35,8 +36,24 @@ export default function Home() {
         });
       }
     }
+    async function fetchLogs() {
+      try {
+        const logs = await getLogs();
+        setActivityLogs(Array.isArray(logs) ? logs : []);
+      } catch (error) {
+        setActivityLogs([]);
+        toast({
+          title: 'Lỗi',
+          description: 'Không thể tải logs.',
+          variant: 'destructive',
+        });
+      }
+    }
     fetchUsers();
+    fetchLogs();
   }, []);
+
+  if (!isClient) return null;
 
   const handleAddUser = () => {
     setEditingUser(undefined);
@@ -56,17 +73,15 @@ export default function Home() {
       if (selectedUserIds.includes(userId)) {
         setSelectedUserIds(prev => prev.filter(id => id !== userId));
       }
-      // Add activity log
-      const newLog: ActivityLog = {
-        id: Date.now().toString(),
-        userId,
-        action: 'User Deleted',
-        timestamp: '',
-        details: `User account "${userToDelete?.description}" was deleted`
-      };
-      setActivityLogs(prev => [newLog, ...prev]);
+      // Ghi log vào database
+      const newLog = await createLog({
+        userId: Number(userId),
+        action: '[User Deleted]',
+        details: `User account "${userToDelete?.description}" was deleted`,
+      });
+      setActivityLogs(prev => Array.isArray(prev) ? [newLog, ...prev] : [newLog]);
       toast({
-        title: 'User Deleted',
+        title: '[User Deleted]',
         description: `User "${userToDelete?.description}" has been deleted.`,
         variant: 'destructive',
       });
@@ -87,28 +102,24 @@ export default function Home() {
         newUser = await updateUser(userData.id, userData);
         setUsers(prev => prev.map(user => user.id === userData.id ? newUser : user));
       } else {
-        console.log('userData', userData);
         newUser = await createUser(userData);
         setUsers(prev => [...prev, newUser]);
       }
-      // Create detailed log message
+      // Ghi log vào database
       let details = isEditing ? 'User information was updated' : 'New user account was created';
       if (changes && changes.length > 0) {
-        const changeDescriptions = changes.map(change => 
+        const changeDescriptions = changes.map(change =>
           `${change.field} changed from "${change.oldValue}" to "${change.newValue}"`
         ).join(', ');
         details = `${changeDescriptions}`;
       }
-      // Add activity log
-      const newLog: ActivityLog = {
-        id: Date.now().toString(),
-        userId: userData.id,
+      const newLog = await createLog({
+        userId: isEditing ? Number(userData.id) : Number(newUser.id),
         action: isEditing ? '[User Updated]' : '[User Created]',
-        timestamp: '',
         details,
-        changes: changes || []
-      };
-      setActivityLogs(prev => [newLog, ...prev]);
+        changes
+      });
+      setActivityLogs(prev => Array.isArray(prev) ? [newLog, ...prev] : [newLog]);
       toast({
         title: isEditing ? 'User Updated' : 'User Created',
         description: isEditing
@@ -160,11 +171,12 @@ export default function Home() {
           {/* Calendar Grid */}
           <div className='w-full'>
             <CalendarGrid
-              currentMonth={currentMonth}
+              currentMonth={currentMonth || new Date()}
               onMonthChange={setCurrentMonth}
               users={users}
               selectedUserIds={selectedUserIds}
               onEditUser={handleEditUser}
+              statusFilter={statusFilter}
             />
           </div>
           {/* Activity Log List */}

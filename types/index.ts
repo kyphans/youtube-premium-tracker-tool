@@ -3,11 +3,10 @@ export interface User {
   description: string;
   duration: number;
   available: number;
-  fees: number;
   startDate: string;
   endDate: string;
   status: 'DONE' | 'NONE' | 'PENDING';
-  feeConstant?: number;
+  feeConstant: number;
   userEmail?: string;
   ownerFamilyEmail?: string;
 }
