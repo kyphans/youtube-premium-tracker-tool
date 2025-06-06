@@ -1,4 +1,5 @@
 import { useUser } from '@clerk/nextjs';
+import Image from 'next/image';
 
 const UserProfile = () => {
   const { user } = useUser();
@@ -7,10 +8,12 @@ const UserProfile = () => {
 
   return (
     <div className="flex items-center gap-3">
-      <img
+      <Image
         src={user.imageUrl}
         alt={user.fullName || 'User Avatar'}
         className="w-8 h-8 rounded-full"
+        width={32}
+        height={32}
       />
       <div>
         <div className="font-semibold">{user.fullName}</div>

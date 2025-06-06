@@ -233,7 +233,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       <AlertDialogHeader>
                         <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete user "
+                          Are you sure you want to delete user &quot;
                           {user.description}"? This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>

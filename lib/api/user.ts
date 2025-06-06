@@ -3,7 +3,7 @@ export async function getUsers() {
   return res.json();
 }
 
-export async function createUser(data: any) {
+export async function createUser(data: unknown) {
   const res = await fetch('/api/user', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -12,7 +12,7 @@ export async function createUser(data: any) {
   return res.json();
 }
 
-export async function updateUser(id: string, data: any) {
+export async function updateUser(id: string, data: unknown) {
   const res = await fetch(`/api/user/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

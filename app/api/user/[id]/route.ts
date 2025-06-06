@@ -1,14 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { sql } from '../../../../lib/db';
 import camelcaseKeys from 'camelcase-keys';
 
 // Lấy user theo id
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request) {
   try {
-    const id = params.id;
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").pop();
     const result = await sql`SELECT * FROM users WHERE id = ${id}`;
     if (result.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -21,12 +19,10 @@ export async function GET(
 }
 
 // Cập nhật user theo id
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request) {
   try {
-    const id = params.id;
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").pop();
     const {
       description,
       duration,
@@ -38,7 +34,7 @@ export async function PUT(
       userEmail,
       ownerFamilyEmail,
       paymentNotes
-    } = await req.json();
+    } = await request.json();
     const result = await sql`
       UPDATE users SET
         description = ${description},
@@ -65,12 +61,10 @@ export async function PUT(
 }
 
 // Xóa user theo id
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request) {
   try {
-    const id = params.id;
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").pop();
     const result = await sql`UPDATE users SET is_deleted = 1 WHERE id = ${id} RETURNING *`;
     if (result.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

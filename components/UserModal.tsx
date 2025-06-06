@@ -36,7 +36,6 @@ const UserModal: React.FC<UserModalProps> = ({
     ownerFamilyEmail: '',
     paymentNotes: ''
   });
-  const [notes, setNotes] = useState('');
   const [originalData, setOriginalData] = useState<Partial<User>>({});
   const [today, setToday] = useState<Date | null>(null);
 

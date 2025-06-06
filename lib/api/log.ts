@@ -8,7 +8,7 @@ export async function createLog(data: {
   userId: number;
   action: string;
   details: string;
-  changes?: { field: string; oldValue: any; newValue: any; }[];
+  changes?: { field: string; oldValue: unknown; newValue: unknown; }[];
 }) {
   const res = await fetch('/api/logs', {
     method: 'POST',

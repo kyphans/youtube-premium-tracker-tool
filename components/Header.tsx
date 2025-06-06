@@ -1,5 +1,4 @@
 import React from 'react';
-import { Users } from 'lucide-react';
 import { Button } from './ui/button';
 import Image from 'next/image';
 import { SignOutButton } from '@clerk/nextjs';
