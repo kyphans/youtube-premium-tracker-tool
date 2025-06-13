@@ -70,9 +70,11 @@ const UserTable: React.FC<UserTableProps> = ({
 
   const handleCopyMessage = (user: User) => {
     if (user.available >= 0) {
+      const message = `Bạn còn ${user.available} ngày sử dụng, đến hạn vào ngày ${user.endDate}.`;
+      navigator.clipboard.writeText(message);
       return toast({
-        title: 'Đã thanh toán',
-        description: 'Không có tin nhắn nhắc nhở',
+        title: 'Thông báo gia hạn',
+        description: message,
       });
     }
 
@@ -80,7 +82,7 @@ const UserTable: React.FC<UserTableProps> = ({
     `Ngày hết hạn gói Youtube là ${user.endDate},
     đã trễ ${Math.abs(user.available)} ngày,
     với giá 1 tháng là ${user.feeConstant}K,
-    vậy số tiền cần thanh toán ít nhất là ${Math.abs((user.feeConstant || 40) / 30 * user.available)}K`;
+    vậy số tiền cần thanh toán ít nhất là ${Math.round(Math.abs((user.feeConstant || 40) / 30 * user.available))}K`;
     navigator.clipboard.writeText(message);
     toast({
       title: 'Đã copy tin nhắn nhắc nhở',

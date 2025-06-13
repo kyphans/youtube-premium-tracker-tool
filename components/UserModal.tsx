@@ -120,6 +120,22 @@ const UserModal: React.FC<UserModalProps> = ({
     return changes;
   };
 
+  const resetForm = () => {
+    setFormData({
+      description: '',
+      duration: 0,
+      available: 0,
+      startDate: '',
+      endDate: '',
+      status: 'NONE',
+      feeConstant: 40,
+      userEmail: '',
+      ownerFamilyEmail: '',
+      paymentNotes: ''
+    });
+    setOriginalData({});
+  };
+
   const handleSave = () => {
     if (!formData.description || !formData.startDate || !formData.duration) {
       toast({
@@ -151,6 +167,9 @@ const UserModal: React.FC<UserModalProps> = ({
         : `"${formData.description}" has been added.`,
       variant: user ? 'info' : 'success',
     });
+    if (!user) {
+      resetForm();
+    }
     onClose();
   };
 
