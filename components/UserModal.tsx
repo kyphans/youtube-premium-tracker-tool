@@ -8,6 +8,7 @@ import UserDetailsTab from './UserModalTabs/UserDetailsTab';
 import PaymentInfoTab from './UserModalTabs/PaymentInfoTab';
 import ServicePackageTab from './UserModalTabs/ServicePackageTab';
 import ActivityLogsTab from './UserModalTabs/ActivityLogsTab';
+import { calculateAvailable } from '../lib/utils';
 
 interface UserModalProps {
   isOpen: boolean;
@@ -50,8 +51,7 @@ const UserModal: React.FC<UserModalProps> = ({
     end.setDate(end.getDate() + duration);
     const endDate = end.toLocaleDateString('en-GB'); // DD/MM/YYYY format
     if (!todayArg) return { endDate, available: 0, fees: 0 };
-    const timeDiff = end.getTime() - todayArg.getTime();
-    const available = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    const available = calculateAvailable(endDate, todayArg);
     const fees = Math.round((available / 30) * feeConstant);
     return { endDate, available, fees };
   };

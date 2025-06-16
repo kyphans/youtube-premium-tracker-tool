@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from './ui/alert-dialog';
 import { useToast } from './ui/use-toast';
+import { calculateAvailable } from '../lib/utils';
 
 interface UserTableProps {
   users: User[];
@@ -69,8 +70,9 @@ const UserTable: React.FC<UserTableProps> = ({
   const isIndeterminate = selectedUserIds.length > 0 && selectedUserIds.length < userList.length;
 
   const handleCopyMessage = (user: User) => {
-    if (user.available >= 0) {
-      const message = `Bạn còn ${user.available} ngày sử dụng, đến hạn vào ngày ${user.endDate}.`;
+    const available = calculateAvailable(user.endDate);
+    if (available >= 0) {
+      const message = `Bạn còn ${available} ngày sử dụng, đến hạn vào ngày ${user.endDate}.`;
       navigator.clipboard.writeText(message);
       return toast({
         title: 'Thông báo gia hạn',
@@ -79,10 +81,7 @@ const UserTable: React.FC<UserTableProps> = ({
     }
 
     const message = 
-    `Ngày hết hạn gói Youtube là ${user.endDate},
-    đã trễ ${Math.abs(user.available)} ngày,
-    với giá 1 tháng là ${user.feeConstant}K,
-    vậy số tiền cần thanh toán ít nhất là ${Math.round(Math.abs((user.feeConstant || 40) / 30 * user.available))}K`;
+    `Ngày hết hạn gói Youtube là ${user.endDate},\nđã trễ ${Math.abs(available)} ngày,\nvới giá 1 tháng là ${user.feeConstant}K,\nvậy số tiền cần thanh toán ít nhất là ${Math.round(Math.abs((user.feeConstant || 40) / 30 * available))}K`;
     navigator.clipboard.writeText(message);
     toast({
       title: 'Đã copy tin nhắn nhắc nhở',
@@ -182,14 +181,21 @@ const UserTable: React.FC<UserTableProps> = ({
                   {user.duration}
                 </td>
                 <td className='px-4 py-4 whitespace-nowrap text-sm text-gray-900'>
-                  {user.available}
-                  {user.available >= 30 &&
-                    ` (${(user.available / 30).toFixed(1)} mo)`}
+                  {(() => {
+                    const available = calculateAvailable(user.endDate);
+                    return <>
+                      {available}
+                      {available >= 30 && ` (${(available / 30).toFixed(1)} mo)`}
+                    </>;
+                  })()}
                 </td>
                 <td className='px-4 py-4 whitespace-nowrap text-sm text-gray-900'>
-                  {user.available >= 0
-                    ? 0
-                    : Math.round((user.available / 30) * user.feeConstant)}
+                  {(() => {
+                    const available = calculateAvailable(user.endDate);
+                    return available >= 0
+                      ? 0
+                      : Math.round((available / 30) * user.feeConstant);
+                  })()}
                 </td>
                 <td className='px-4 py-4 whitespace-nowrap text-sm text-gray-900'>
                   {user.endDate}

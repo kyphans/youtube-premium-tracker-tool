@@ -26,7 +26,6 @@ export async function PUT(request: Request) {
     const {
       description,
       duration,
-      available,
       feeConstant,
       startDate,
       endDate,
@@ -39,7 +38,6 @@ export async function PUT(request: Request) {
       UPDATE users SET
         description = ${description},
         duration = ${duration},
-        available = ${available},
         fee_constant = ${feeConstant},
         start_date = ${startDate},
         end_date = ${endDate},
