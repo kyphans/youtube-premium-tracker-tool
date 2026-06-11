@@ -8,7 +8,7 @@ export const metadata = {
     title: 'Sign In | YouTube Premium Tracker',
     description:
       'Sign in to your YouTube Premium Tracker account to manage your content and activities.',
-    url: 'https://youtube.pqky.tech/sign-in',
+    url: 'https://youtube.kyphan.tech/sign-in',
     siteName: 'YouTube Premium Tracker',
     images: [
       {

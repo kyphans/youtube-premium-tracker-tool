@@ -32,7 +32,7 @@ export const metadata = {
     title: 'YouTube Premium Tracker',
     description:
       'Easily track and manage your YouTube content calendar with powerful user and activity management features.',
-    url: 'https://youtube.pqky.tech',
+    url: 'https://youtube.kyphan.tech',
     siteName: 'YouTube Premium Tracker',
     images: [
       {
